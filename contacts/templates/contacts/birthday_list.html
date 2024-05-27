@@ -1,0 +1,37 @@
+{% extends "contacts/index.html" %}
+
+{% block title %}Birthdays{% endblock %}
+
+{% block content %}
+<nav>
+    <a href="{% url 'contacts:contact_book' %}">Back</a>
+</nav>
+    <h1>Find Contacts with Upcoming Birthdays</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Search</button>
+    </form>
+
+    {% if page_obj %}
+        <h2>Contacts with Birthdays in {{ days_ahead_form.initial.days_ahead }} days:</h2>
+        <ul>
+        {% for contact in page_obj %}
+            <li>{{ contact.name }} {{ contact.surname }} - {{ contact.birthday }}</li>
+        {% endfor %}
+        </ul>
+        {% if page_obj.has_other_pages %}
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1{% if days_ahead_form.days_ahead.value %}&days_ahead={{ days_ahead_form.days_ahead.value }}{% endif %}">&laquo; First</a>
+                    <a href="?page={{ page_obj.previous_page_number }}{% if days_ahead_form.days_ahead.value %}&days_ahead={{ days_ahead_form.days_ahead.value }}{% endif %}">Previous</a>
+                {% endif %}
+            <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</span>
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if days_ahead_form.days_ahead.value %}&days_ahead={{ days_ahead_form.days_ahead.value }}{% endif %}">Next</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}{% if days_ahead_form.days_ahead.value %}&days_ahead={{ days_ahead_form.days_ahead.value }}{% endif %}">Last &raquo;</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% endif %}
+{% endblock %}

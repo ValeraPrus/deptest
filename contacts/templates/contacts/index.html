@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Personal assistant</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css"/>
+    <link rel="stylesheet" href="{% static 'contacts/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'contacts/main.css' %}">
+</head>
+<body>
+
+    <div class="container">
+        <div class="row header-box">
+            <div class="col-md-2">
+                <h2>
+                    <a href="/" style="text-decoration: none">Personal<br>assistant</a>
+                </h2>
+            </div>
+            <div class="col-md-10">
+
+                <div class="per-assist-menu-container">
+                    {% if user.is_authenticated %}
+                    <div class="per-assist-menu">
+                        <div class="user-menu">
+                            <ul>
+                                <li><a href="{% url 'contacts:contact_book' %}" role="button">Contacts</a></li>
+                                <li><a href="{% url 'notes:notes' %}" role="button">Notes</a></li>
+                                <li><a href="{% url 'notes:tags' %}" role="button">Tags</a></li>
+                                <li><a href="{% url 'files:file_list' %}" role="button">Files</a></li>
+                                <li><a href="{% url 'exchange_rates:exchange_rates' %}" role="button">Exchange rates</a></li>
+                                <li><a href="{% url 'the_news:news_list' %}" role="button">News</a></li>
+                                <li><a href="{% url 'forecast:get_weather_forecast' %}" role="button">Weather</a></li>
+                            </ul>
+                        </div>
+                        <div class="user-login-menu">
+                            <ul>
+                                <li>Welcome <b>{{ user.username }}!</b></li>
+                                <li><a href="{% url 'users:logout' %}" role="button">Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="per-assist-menu">
+                        <ul>
+                            <li><a href="{% url 'users:signup' %}" role="button">Sign Up</a></li>
+                            <li><a href="{% url 'users:login' %}" role="button">Login</a></li>
+                        </ul>
+                    </div>
+                    {% endif %}  
+                </div>     
+
+            </div>
+        </div>          
+
+        <div class="row">
+            
+            <div class="col-md-3">
+
+                {% if request_path == "/forecast/current/"%}
+                <div class="search_notes">
+                    <h4>Select weather for:</h4> 
+                    <form method="GET" action="{% url 'forecast:get_current_weather' %}">
+                        <select name="location">
+                        <option value="50.4501,30.5234" {% if location == 'Kyiv' %}selected{% endif %}>Kyiv</option>
+                        <option value="51.5074,-0.1278" {% if location == 'London' %}selected{% endif %}>London</option>
+                        <option value="38.8951,-77.0364" {% if location == 'Washington' %}selected{% endif %}>Washington</option>
+                        <option value="48.8566,2.3522" {% if location == 'Paris' %}selected{% endif %}>Paris</option>
+                        <option value="52.5200,13.4050" {% if location == 'Berlin' %}selected{% endif %}>Berlin</option>
+                        <option value="41.9028,12.4964" {% if location == 'Rome' %}selected{% endif %}>Rome</option>
+                        <option value="40.4168,-3.7038" {% if location == 'Madrid' %}selected{% endif %}>Madrid</option>
+                        </select>
+                        <button type="submit">Get weather</button>
+                    </form>
+                </div>
+                {% endif %}
+
+                {% if request_path == "/forecast/"%}
+                <div class="search_notes">
+                    <h4>Select weather for:</h4>           
+                    <form method="GET" action="{% url 'forecast:get_weather_forecast' %}">
+                        <select name="location">
+                        <option value="50.4501,30.5234" {% if location == 'Kyiv' %}selected{% endif %}>Kyiv</option>
+                        <option value="51.5074,-0.1278" {% if location == 'London' %}selected{% endif %}>London</option>
+                        <option value="38.8951,-77.0364" {% if location == 'Washington' %}selected{% endif %}>Washington</option>
+                        <option value="48.8566,2.3522" {% if location == 'Paris' %}selected{% endif %}>Paris</option>
+                        <option value="52.5200,13.4050" {% if location == 'Berlin' %}selected{% endif %}>Berlin</option>
+                        <option value="41.9028,12.4964" {% if location == 'Rome' %}selected{% endif %}>Rome</option>
+                        <option value="40.4168,-3.7038" {% if location == 'Madrid' %}selected{% endif %}>Madrid</option>
+                        </select>
+                        <button type="submit">Get weather</button>
+                    </form>
+                </div>
+                {% endif %}
+
+                {% if request_path == "/files/" or request_path == "/files/files/"  %}
+                <div class="search_notes">
+                    <h4>Files filter</h4>                
+                    <form method="get" action="{% url 'files:file_list' %}">
+                        <select name="category">
+                            <option value="">All categories</option>
+                            {% for category in categories %}
+                                <option value="{{ category }}" {% if category == request.GET.category %}selected{% endif %}>{{ category }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit">Filter</button>
+                    </form>
+                </div>
+                {% endif %}
+
+                {% if request_path == "/the_news/" or request_path == "/the_news/the_news/"  %}
+                <div class="search_notes">
+                    <h4>News filter</h4>
+                    <form method="get">
+                        <select name="categories">
+                            <option value="">All categories</option>
+                            <option value="general"  {% if selected_category == 'general' %}selected{% endif %}>general</option>
+                            <option value="business" {% if selected_category == 'business' %}selected{% endif %}>business</option>
+                            <option value="science"  {% if selected_category == 'science' %}selected{% endif %}>science</option>
+                            <option value="politics" {% if selected_category == 'politics' %}selected{% endif %}>politics</option>
+                            <option value="tech"     {% if selected_category == 'tech' %}selected{% endif %}>tech</option>
+                        </select>
+                        <button type="submit">Filter</button>
+                    </form>
+                </div>
+                {% endif %}
+
+                {% if request_path == "/notes/" or request_path == "/notes/notes/" %}
+
+                <div class="search_notes">
+                    <h4>Search notes</h4>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div>
+                            <label for="{{ form.find_note_criteria.id_for_label }}">Search by:</label>
+                            {{ form.find_note_criteria }}
+                        </div>
+                        <div>
+                            <label for="{{ form.find_note_value.id_for_label }}">Enter value:</label>
+                            {{ form.find_note_value }}
+                        </div>
+                        <button type="submit">Search</button>
+                    </form>
+                </div>
+
+                <div class="top_ten_tags">
+                    <h4>Sort notes by tags</h4>
+                    {% for tag in most_used_tags %}
+                        <span class="tag-item">
+                            <a class="tag" style="font-size: {{ tag_size_block|slice:forloop.counter|last }}px" href="{% url 'notes:notes' %}?tag_id={{tag.id}}">{{ tag.name }}</a> ({{ tag.num_notes }} notes)
+                        </span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% if request_path == "/contacts/" %}
+                    <div class="upcoming-birthdays">
+                        <h4>Upcoming Birthdays</h4>
+                        <h5>Birthdays in 7 days</h5>
+                        <ul>
+                            {% for contact in upcoming_birthdays %}
+                                <li>{{ contact.name }} {{ contact.surname }} - {{ contact.birthday }}</li>
+                            {% endfor %}
+                        </ul>
+                        <form method="GET" action="{% url 'contacts:contact_book' %}">
+                            {{ days_ahead_form.as_p }}
+                            <button type="submit" class="btn btn-primary">Check</button>
+                        </form>
+                        
+                    </div>
+                    <div class="search_contacts">
+                        <h4>Search Contacts</h4>
+                        <form method="get">
+                            <div>
+                                <label for="{{ search_form.find_contact_criteria.id_for_label }}">Search by:</label>
+                                    {{ search_form.find_contact_criteria }}
+                            </div>
+                            <div>
+                                <label for="{{ search_form.find_contact_value.id_for_label }}">Enter value:</label>
+                                    {{ search_form.find_contact_value }}
+                            </div>
+                            <button type="submit">Search</button>
+                        </form>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col-md-9">
+                
+                {% block content %} {% endblock %}
+
+            </div>
+
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p class="copyright">
+                Made by <span class="zyte">Pythonic wizards team</span>
+            </p>
+        </div>
+    </footer>
+
+    <div id="gadsf21g"></div><div at-magnifier-wrapper=""><div class="at-theme-light"><div class="at-base notranslate" translate="no"><div class="EuwGd" style="top: 0px; left: 0px;"></div></div></div></div>
+
+</body>
+</html>
