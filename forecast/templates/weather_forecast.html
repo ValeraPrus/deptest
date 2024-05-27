@@ -1,0 +1,16 @@
+{% extends "contacts/index.html" %}
+
+{% block content %}
+
+<h1>7 day weather forecast for {{ location }}</h1>
+  <ul>
+    {% for weather in weather_forecast %}
+      <li>
+        <p>Date: {{ weather.forecast_date }}</p>
+        <p>Temperature: {{ weather.temperature }}°C</p>
+        <p>Description: {{ weather.description }}</p>
+      </li>
+    {% endfor %}
+  </ul>
+
+{% endblock %}
