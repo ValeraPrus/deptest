@@ -101,18 +101,27 @@ WSGI_APPLICATION = 'per_assist.wsgi.application'
 # CREATE DATABASE per_assist;
 # \l    - list of databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': env('DATABASE_NAME'),
+#         'USER': env('DATABASE_USER'),
+#         'PASSWORD': env('DATABASE_PASSWORD'),
+#         'HOST': env('DATABASE_HOST'),
+#         'PORT': env('DATABASE_PORT'),
+#     }
+# }
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': env('DATABASE_NAME'),
-        'USER': env('DATABASE_USER'),
-        'PASSWORD': env('DATABASE_PASSWORD'),
-        'HOST': env('DATABASE_HOST'),
-        'PORT': env('DATABASE_PORT'),
-    }
+    'default': dj_database_url.config(
+        default='postgres://{user}:{password}@{hostname}/{database}'.format(
+            user=env('DATABASE_USER')',
+            password=env('DATABASE_PASSWORD'),
+            hostname=env('DATABASE_HOST'),
+            # port=env('DATABASE_PORT'),
+            database=env('DATABASE_NAME'),
+        )
+    )
 }
-
-
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
