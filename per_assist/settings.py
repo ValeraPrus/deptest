@@ -113,11 +113,11 @@ WSGI_APPLICATION = 'per_assist.wsgi.application'
 # }
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgres://{user}:{password}@{hostname}/{database}'.format(
+        default='postgres://{user}:{password}@{hostname}{port}/{database}'.format(
             user=env('DATABASE_USER'),
             password=env('DATABASE_PASSWORD'),
             hostname=env('DATABASE_HOST'),
-            # port=env('DATABASE_PORT'),
+            port=env('DATABASE_PORT'),
             database=env('DATABASE_NAME'),
         )
     )
